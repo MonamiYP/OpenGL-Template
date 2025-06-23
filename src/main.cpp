@@ -8,6 +8,7 @@
 #include "ApplicationState.hpp"
 #include "Input.hpp"
 #include "Window.hpp"
+#include "Camera.hpp"
 
 #include "primitives/Rectangle.hpp"
 #include "VertexBufferLayout.hpp"
@@ -18,11 +19,15 @@
 int main() {
     ApplicationState state;
     Window window;
-    if (window.setupWindow(state.window) != 0) return -1;
-
-    ImGUI imGUI(state.window);
     Renderer renderer;
-    Input input;
+
+    state.window = window.setupWindow();
+    if (!state.window) return -1;
+    
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    Input input(&camera);
+    window.setupCallbacks(state.window, &input);
+    ImGUI imGUI(state.window);
 
     std::vector<float> vertices = Rectangle::GetVertices();
     std::vector<unsigned int> indices = Rectangle::GetIndices();
@@ -35,14 +40,18 @@ int main() {
     vao.AddBuffer(vbo, layout);
 
     Shader shader;
-    std::string vertex_source = shader.ParseShader("../res/shaders/basic.vs");
-    std::string fragment_source = shader.ParseShader("../res/shaders/basic.fs");
+    std::string vertex_source = shader.ParseShader("../res/shaders/basic.vertex");
+    std::string fragment_source = shader.ParseShader("../res/shaders/basic.fragment");
     shader.CreateShaderProgram(vertex_source, fragment_source);
 
     while (!glfwWindowShouldClose(state.window)) {
         float currentTime = glfwGetTime();
         state.deltaTime = currentTime - state.lastTime;
         state.lastTime = currentTime;
+
+        shader.Bind();
+        shader.SetMatrix4("u_view", camera.GetCameraView());
+        shader.SetMatrix4("u_projection", camera.GetCameraProjection());
 
         input.processInput(state);
         renderer.Clear();
@@ -58,5 +67,3 @@ int main() {
     glfwTerminate();
     return 0;
 }
-
-// renderer.Draw(vao, ibo, shader);

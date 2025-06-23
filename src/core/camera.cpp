@@ -1,17 +1,7 @@
 #include "Camera.hpp"
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) :
-m_forwards(glm::vec3(0.0f, 0.0f, -1.0f)), m_movementSpeed(5.0f), m_mouseSensitivity(0.1f), m_fov(40.0f) {
-    m_position = position;
-    m_worldUp = up;
-    m_yaw = yaw;
-    m_pitch = pitch;
-
+Camera::Camera(glm::vec3 position, float aspect_ratio) : m_forwards(glm::vec3(0.0f, 0.0f, -1.0f)), m_movementSpeed(5.0f), m_mouseSensitivity(0.1f), m_fov(40.0f), m_position(position), m_yaw(-90.0f), m_pitch(0.0f), m_worldUp(0.0f, 1.0f, 0.0f), m_up(0.0f, 1.0f, 0.0f), m_near(1.0f), m_far(10.0f), m_aspectRatio(aspect_ratio) {
     UpdateVectors();
-}
-
-glm::mat4 Camera::GetCameraView() {
-    return glm::lookAt(m_position, m_position + m_forwards, m_up);
 }
 
 void Camera::ProcessKeyboardInput(CameraMovementDir dir, float deltaTime) {
@@ -42,7 +32,7 @@ void Camera::ProcessMouseInput(float xOffset, float yOffset) {
 }
 
 void Camera::ProcessScrollInput(float yScroll) {
-    m_fov -= yScroll;
+    m_fov += yScroll;
 
     if (m_fov > 60.0f) { m_fov = 60.0f; }
     else if (m_fov < 5.0f) { m_fov = 5.0f; }
@@ -57,16 +47,4 @@ void Camera::UpdateVectors() {
     m_forwards = glm::normalize(frontDir);
     m_right = glm::normalize(glm::cross(m_forwards, m_worldUp));
     m_up  = glm::normalize(glm::cross(m_right, m_forwards));
-}
-
-float Camera::GetFOV() {
-    return glm::radians(m_fov);
-}
-
-glm::vec3 Camera::GetPosition() {
-    return m_position;
-}
-
-glm::vec3 Camera::GetForwards() {
-    return m_forwards;
 }

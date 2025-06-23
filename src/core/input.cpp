@@ -4,7 +4,40 @@ void Input::processInput(ApplicationState& state) {
     if (glfwGetKey(state.window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(state.window, true);
 
+    if (glfwGetKey(state.window, GLFW_KEY_W) == GLFW_PRESS)
+        m_camera->ProcessKeyboardInput(FORWARDS, state.deltaTime);
+    if (glfwGetKey(state.window, GLFW_KEY_S) == GLFW_PRESS)
+        m_camera->ProcessKeyboardInput(BACKWARDS, state.deltaTime);
+    if (glfwGetKey(state.window, GLFW_KEY_A) == GLFW_PRESS)
+        m_camera->ProcessKeyboardInput(LEFT, state.deltaTime);
+    if (glfwGetKey(state.window, GLFW_KEY_D) == GLFW_PRESS)
+        m_camera->ProcessKeyboardInput(RIGHT, state.deltaTime);
+    if (glfwGetKey(state.window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        m_camera->ProcessKeyboardInput(UP, state.deltaTime);
+    if (glfwGetKey(state.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        m_camera->ProcessKeyboardInput(DOWN, state.deltaTime);
+
     toggleImGUI(state);
+}
+
+void Input::mouseCallback(float xpos, float ypos) {
+    if (m_firstMouse) {
+        m_lastX = xpos;
+        m_lastY = ypos;
+        m_firstMouse = false;
+    }
+
+    float xoffset = xpos - m_lastX;
+    float yoffset = m_lastY - ypos;
+
+    m_lastX = xpos;
+    m_lastY = ypos;
+
+    m_camera->ProcessMouseInput(xoffset, yoffset);
+}
+
+void Input::scrollCallback(float yscroll) {
+    m_camera->ProcessScrollInput(yscroll);
 }
 
 void Input::toggleImGUI(ApplicationState& state) {

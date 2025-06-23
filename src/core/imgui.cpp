@@ -18,13 +18,13 @@ ImGUI::~ImGUI() {
     ImGui::DestroyContext();
 }
 
-void ImGUI::drawGUI(float deltaTime, float fps) {
+void ImGUI::drawGUI() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
     ImGui::Begin("GUI");
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", deltaTime * 1000.0f, fps);
+    ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
     ImGui::End();
 
     ImGui::Render();

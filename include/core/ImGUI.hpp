@@ -9,5 +9,5 @@ class ImGUI {
         ImGUI(GLFWwindow* window);
         ~ImGUI();
         
-        void drawGUI(float deltaTime, float fps);
+        void drawGUI();
 };

@@ -4,6 +4,12 @@
 #include <vector>
 #include <stdexcept>
 
+/*
+    Structure representing a single vertex attribute in the layout
+    - type: OpenGL enum for the data type (e.g., GL_FLOAT)
+    - size: Number of components in the attribute (e.g., 3 for vec3)
+    - normalized: Whether the data should be normalized when sent to the shader
+*/ 
 struct VertexBufferAttributes {
     unsigned int type;
     unsigned int size;
@@ -17,13 +23,13 @@ class VertexBufferLayout {
     public:
         VertexBufferLayout() : m_stride(0) {}
 
-        void AddAttribute(unsigned int size) {
-            m_attributes.push_back({ GL_FLOAT, size, GL_FALSE });
-            m_stride += sizeof(GLfloat) * size;
+        void AddAttribute(unsigned int type, unsigned int size, unsigned char normalized = GL_FALSE) {
+            m_attributes.push_back({ type, size, normalized });
+            m_stride += sizeof(type) * size;
         }
 
-        void IgnoreAttribute(unsigned int size) {
-            m_stride += sizeof(GLfloat) * size;
+        void IgnoreAttribute(unsigned int type, unsigned int size) {
+            m_stride += sizeof(type) * size;
         }
 
         inline const std::vector<VertexBufferAttributes> GetAttributes() const& { return m_attributes; }
